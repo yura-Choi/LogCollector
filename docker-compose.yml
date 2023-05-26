@@ -1,8 +1,6 @@
-# setting heap size using command: sysctl -w vm.max_map_count=262144
-
 services:
   es01:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.1
     container_name: es01
     volumes:
       - type: volume
@@ -20,9 +18,10 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - username=elastic
       - password=elastic
+      - xpack.security.enabled=false
 
   es02:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.1
     container_name: es02
     volumes:
       - type: volume
@@ -39,9 +38,10 @@ services:
       - discovery.seed_hosts=es01,es03
       - username=elastic
       - password=elastic
+      - xpack.security.enabled=false
 
   es03:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.1
     container_name: es03
     volumes:
       - type: volume
@@ -59,19 +59,11 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - username=elastic
       - password=elastic
+      - xpack.security.enabled=false
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:7.9.1
+    image: docker.io/yutaa/logstash:latest
     container_name: logstash
-    volumes:
-      - type: bind
-        source: ./logstash/config/logstash.yml
-        target: /usr/share/logstash/config/logstash.yml
-        read_only: true
-      - type: bind
-        source: ./logstash/pipeline/pip_test.config
-        target: /usr/share/logstash/pipeline/pip_test.config
-        read_only: true
     ports:
       - 5044:5044
     networks:
@@ -82,22 +74,15 @@ services:
       - es03
 
   filebeat:
-    image: docker.elastic.co/beats/filebeat:7.9.1
-    # build: ./filebeat/
+    image: docker.io/yutaa/filebeat:latest
     container_name: filebeat
     volumes:
       - type: bind
-        source: ./filebeat/filebeat.yml
-        target: /usr/share/filebeat/filebeat.yml
-        read_only: true
+        source: ./logs/suricata
+        target: /var/logs/beats/suricata
       - type: bind
-        source: ./logs/1
-        target: /var/logs/beats/1
-        read_only: true
-      - type: bind
-        source: ./logs/2
-        target: /var/logs/beats/2
-        read_only: true
+        source: ./logs/ml
+        target: /var/logs/beats/ml
     networks:
       - elastic
     depends_on:
@@ -108,11 +93,8 @@ services:
 
 volumes:
   esdata01:
-    driver: local
   esdata02:
-    driver: local
   esdata03:
-    driver: local
 
 networks:
   elastic:

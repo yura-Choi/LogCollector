@@ -1,17 +1,28 @@
 filebeat.inputs:
-    - type: log
-      enabled: true
-      encoding: UTF-8
-      paths:
-        - "/var/logs/beats/1/*.json"
-      tags: ["json"]
+- type: filestream
+  enabled: true
+  paths:
+    - "/var/logs/beats/suricata/*.json"
+  tags: ["json", "suricata"]
+  encoding: UTF-8
+  backoff:
+    delay: 1s
+    max: 2s
+  scan_frequency: 2s
+  close_timeout: 2s
 
-    - type: log
-      enabled: true
-      encoding: UTF-8
-      paths:
-        - "/var/logs/beats/2/*.csv"
-      tags: ["csv"]
+- type: filestream
+  enabled: true
+  id: csv-harvester
+  paths:
+    - "/var/logs/beats/ml/*.csv"
+  tags: ["csv"]
+  encoding: UTF-8
+  backoff:
+    delay: 1s
+    max: 2s
+  scan_frequency: 2s
+  close_timeout: 2s
 
 output.logstash:
   hosts: ["logstash:5044"]
