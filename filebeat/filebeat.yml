@@ -1,26 +1,24 @@
 filebeat.inputs:
-- type: filestream
+- type: log
   enabled: true
   paths:
     - "/var/logs/beats/suricata/*.json"
   tags: ["json", "suricata"]
   encoding: UTF-8
-  backoff:
-    delay: 1s
-    max: 2s
+  backoff: 1s
+  max_backoff: 2s
   scan_frequency: 2s
   close_timeout: 2s
 
-- type: filestream
+- type: log
   enabled: true
   id: csv-harvester
   paths:
     - "/var/logs/beats/ml/*.csv"
   tags: ["csv"]
   encoding: UTF-8
-  backoff:
-    delay: 1s
-    max: 2s
+  backoff: 1s
+  max_backoff: 2s
   scan_frequency: 2s
   close_timeout: 2s
 

@@ -1,6 +1,6 @@
 services:
   es01:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
     container_name: es01
     volumes:
       - type: volume
@@ -21,7 +21,7 @@ services:
       - xpack.security.enabled=false
 
   es02:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
     container_name: es02
     volumes:
       - type: volume
@@ -41,7 +41,7 @@ services:
       - xpack.security.enabled=false
 
   es03:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
     container_name: es03
     volumes:
       - type: volume
@@ -62,7 +62,7 @@ services:
       - xpack.security.enabled=false
 
   logstash:
-    image: docker.io/yutaa/logstash:latest
+    build: ./logstash/
     container_name: logstash
     ports:
       - 5044:5044
@@ -74,7 +74,7 @@ services:
       - es03
 
   filebeat:
-    image: docker.io/yutaa/filebeat:latest
+    build: ./filebeat/
     container_name: filebeat
     volumes:
       - type: bind
